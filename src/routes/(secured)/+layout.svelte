@@ -12,9 +12,19 @@
     HeaderPanelLinks,
     HeaderPanelLink,
     HeaderNav,
-    HeaderNavItem
+    HeaderNavItem,
+    HeaderPanelDivider
   } from 'carbon-components-svelte';
   import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
+
+  import type { LayoutData } from './$types';
+  import { readable } from 'svelte/store';
+  import { setContext } from 'svelte';
+
+  export let data: LayoutData;
+
+  const user = readable(data.username);
+  setContext('user', user);
 
   let isOpen = false;
 </script>
@@ -35,6 +45,7 @@
     >
       <HeaderPanelLinks>
         <div data-sveltekit-preload-data="off">
+          <HeaderPanelDivider>{$user}</HeaderPanelDivider>
           <HeaderPanelLink href="/logout">Log out</HeaderPanelLink>
         </div>
       </HeaderPanelLinks>
