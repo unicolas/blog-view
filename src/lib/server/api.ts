@@ -12,7 +12,7 @@ export const fromApi = (route: string, params?: QueryParams) => {
   return `${env.API_URL}/${route}${params ? `?${join(params)}` : ''}`;
 }
 
-export const withToken = (token: string, init?: RequestInit) => (
+export const withToken = (token: string, init?: RequestInit): RequestInit => (
   {
     ...init,
     headers: {
