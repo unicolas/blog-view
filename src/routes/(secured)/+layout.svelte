@@ -16,15 +16,12 @@
     HeaderPanelDivider
   } from 'carbon-components-svelte';
   import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
-
   import type { LayoutData } from './$types';
-  import { readable } from 'svelte/store';
-  import { setContext } from 'svelte';
+  import { userStore } from '$lib/stores';
 
   export let data: LayoutData;
 
-  const user = readable(data.username);
-  setContext('user', user);
+  const user = userStore({ name: data.username, id: data.id });
 
   let isOpen = false;
 </script>
@@ -45,7 +42,7 @@
     >
       <HeaderPanelLinks>
         <div data-sveltekit-preload-data="off">
-          <HeaderPanelDivider>{$user}</HeaderPanelDivider>
+          <HeaderPanelDivider>{$user.name}</HeaderPanelDivider>
           <HeaderPanelLink href="/logout">Log out</HeaderPanelLink>
         </div>
       </HeaderPanelLinks>
