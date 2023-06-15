@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Post } from '$lib';
+  import { Post } from '$lib/components';
   import type { PageDto, PostDto } from '$lib/types';
   import {
     Button,
@@ -13,16 +13,24 @@
   export let data: PageDto<PostDto>;
 
   let { content: posts, nextCursor, hasNextPage } = data;
-  let nextPosts = [] as PostDto[];
-
-  $: posts = [...posts, ...nextPosts];
+  let active: { [key: string]: boolean } = {};
 
   const fetchNext = async () => {
     const response = await fetch(`/posts?after=${nextCursor}`);
     const data = (await response.json()) as PageDto<PostDto>;
+    posts = [...posts, ...data.content];
     nextCursor = data.nextCursor;
-    nextPosts = data.content;
     hasNextPage = data.hasNextPage;
+  };
+  const handleDeletePost = async (event: CustomEvent<string>) => {
+    const postId = event.detail;
+    active = { ...active, [postId]: true };
+    const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
+    if (response.status === 200) {
+      posts = posts.filter(({ postId: id }) => id !== postId);
+    } else {
+      active = { ...active, [postId]: false };
+    }
   };
 </script>
 
@@ -34,10 +42,19 @@
       </Breadcrumb>
     </Column>
   </Row>
-  {#each posts as { title, content, tags, createdAt: date, postId: id }}
+  {#each posts as { title, content, tags, createdAt: date, postId: id, authorId }}
     <Row padding>
       <Column>
-        <Post {id} {title} {content} {tags} {date} />
+        <Post
+          {id}
+          {title}
+          {content}
+          {tags}
+          {date}
+          {authorId}
+          active={active[id] ?? false}
+          on:delete={handleDeletePost}
+        />
       </Column>
     </Row>
   {/each}
