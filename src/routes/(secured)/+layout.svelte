@@ -18,10 +18,13 @@
   import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
   import type { LayoutData } from './$types';
   import { userStore } from '$lib/stores';
+  import { NotificationArea } from '$lib/components';
+  import { notificationsStore } from '$lib/stores/notification';
 
   export let data: LayoutData;
 
   const user = userStore({ name: data.username, id: data.id });
+  notificationsStore();
 
   let isOpen = false;
 </script>
@@ -49,7 +52,7 @@
     </HeaderAction>
   </HeaderUtilities>
 </Header>
-
+<NotificationArea />
 <Content>
   <Grid noGutter>
     <Row>

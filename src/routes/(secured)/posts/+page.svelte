@@ -1,5 +1,9 @@
 <script lang="ts">
   import { Post } from '$lib/components';
+  import {
+    addNotification,
+    notificationsStore
+  } from '$lib/stores/notification';
   import type { PageDto, PostDto } from '$lib/types';
   import {
     Button,
@@ -28,10 +32,19 @@
     const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
     if (response.status === 200) {
       posts = posts.filter(({ postId: id }) => id !== postId);
+      addNotification(notifications, {
+        kind: 'success',
+        title: 'Post deleted'
+      });
     } else {
       active = { ...active, [postId]: false };
+      addNotification(notifications, {
+        kind: 'error',
+        title: 'Failed to delete post'
+      });
     }
   };
+  const notifications = notificationsStore();
 </script>
 
 <Grid narrow>
