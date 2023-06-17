@@ -1,5 +1,5 @@
-import { getContext, hasContext, setContext } from "svelte";
-import { readable, type Readable } from "svelte/store";
+import { getContext, hasContext, setContext } from 'svelte';
+import { readable, type Readable } from 'svelte/store';
 
 type User = { name: string; id: string };
 
@@ -10,4 +10,4 @@ export const userStore = (value?: User) => {
   const user = readable<User>(value);
   setContext('user', user);
   return user;
-}
+};
