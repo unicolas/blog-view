@@ -14,6 +14,7 @@
   "devDependencies": {
     "@carbon/colors": "^11.15.0",
     "@carbon/themes": "^11.19.0",
+    "@carbon/type": "^11.19.0",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/kit": "^1.5.0",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
