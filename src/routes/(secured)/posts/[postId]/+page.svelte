@@ -1,20 +1,24 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
-  import { Post } from '$lib/components';
+  import { Card, DateCaption, DeleteButton } from '$lib/components';
+  import { userStore } from '$lib/stores';
   import type { PostDto } from '$lib/types';
   import {
     Breadcrumb,
     BreadcrumbItem,
+    Button,
     Column,
     Grid,
-    Row
+    Row,
+    Tag
   } from 'carbon-components-svelte';
+  import { Chat } from 'carbon-icons-svelte';
   import {
     addNotification,
     notificationsStore
   } from '$lib/stores/notification';
 
-  export let data: { post: PostDto };
+  export let data: { post: PostDto & { username: string } };
 
   let active = false;
   const {
@@ -23,7 +27,8 @@
     content,
     tags,
     createdAt: date,
-    authorId
+    authorId,
+    username
   } = data.post;
   const url = `/posts/${id}`;
   const handleDeletePost = async (event: CustomEvent<string>) => {
@@ -45,6 +50,7 @@
     }
   };
   const notifications = notificationsStore();
+  const user = userStore();
 </script>
 
 <Grid narrow>
@@ -58,16 +64,25 @@
   </Row>
   <Row padding>
     <Column>
-      <Post
-        {id}
-        {title}
-        {content}
-        {tags}
-        {date}
-        {authorId}
-        {active}
-        on:delete={handleDeletePost}
-      />
+      <Card heading={title} eyebrow={username} body={content}>
+        <svelte:fragment slot="heading-action">
+          <svelte:component
+            this={authorId === $user.id ? DeleteButton : undefined}
+            {id}
+            disabled={active}
+            on:delete={handleDeletePost}
+          />
+        </svelte:fragment>
+        <svelte:fragment slot="actions">
+          <Button kind="ghost" href={`/posts/${id}/#`} icon={Chat}>#</Button>
+          <DateCaption {date} />
+        </svelte:fragment>
+        <svelte:fragment slot="tag-group">
+          {#each tags as tag}
+            <Tag interactive>{tag}</Tag>
+          {/each}
+        </svelte:fragment>
+      </Card>
     </Column>
   </Row>
 </Grid>

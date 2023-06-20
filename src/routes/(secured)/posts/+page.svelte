@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Post } from '$lib/components';
+  import { DateCaption, DeleteButton, Card } from '$lib/components';
+  import { userStore } from '$lib/stores';
   import {
     addNotification,
     notificationsStore
@@ -11,17 +12,21 @@
     Row,
     Column,
     Breadcrumb,
-    BreadcrumbItem
+    BreadcrumbItem,
+    Tag
   } from 'carbon-components-svelte';
+  import { Chat } from 'carbon-icons-svelte';
 
-  export let data: PageDto<PostDto>;
+  export let data: PageDto<PostDto & { username: string }>;
 
   let { content: posts, nextCursor, hasNextPage } = data;
   let active: { [key: string]: boolean } = {};
 
   const fetchNext = async () => {
     const response = await fetch(`/posts?after=${nextCursor}`);
-    const data = (await response.json()) as PageDto<PostDto>;
+    const data = (await response.json()) as PageDto<
+      PostDto & { username: string }
+    >;
     posts = [...posts, ...data.content];
     nextCursor = data.nextCursor;
     hasNextPage = data.hasNextPage;
@@ -45,6 +50,7 @@
     }
   };
   const notifications = notificationsStore();
+  const user = userStore();
 </script>
 
 <Grid narrow>
@@ -55,19 +61,30 @@
       </Breadcrumb>
     </Column>
   </Row>
-  {#each posts as { title, content, tags, createdAt: date, postId: id, authorId }}
+  {#each posts as { title, content, tags, createdAt, postId, authorId, username }}
     <Row padding>
       <Column>
-        <Post
-          {id}
-          {title}
-          {content}
-          {tags}
-          {date}
-          {authorId}
-          active={active[id] ?? false}
-          on:delete={handleDeletePost}
-        />
+        <Card heading={title} eyebrow={username} body={content}>
+          <svelte:fragment slot="heading-action">
+            <svelte:component
+              this={authorId === $user.id ? DeleteButton : undefined}
+              id={postId}
+              disabled={active[postId] ?? false}
+              on:delete={handleDeletePost}
+            />
+          </svelte:fragment>
+          <svelte:fragment slot="actions">
+            <Button kind="ghost" href={`/posts/${postId}`} icon={Chat}>
+              #
+            </Button>
+            <DateCaption date={createdAt} />
+          </svelte:fragment>
+          <svelte:fragment slot="tag-group">
+            {#each tags as tag}
+              <Tag interactive>{tag}</Tag>
+            {/each}
+          </svelte:fragment>
+        </Card>
       </Column>
     </Row>
   {/each}
