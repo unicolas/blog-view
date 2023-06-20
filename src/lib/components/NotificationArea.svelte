@@ -1,27 +1,31 @@
 <script lang="ts">
-  import {
-    notificationsStore,
-    removeNotification
-  } from '$lib/stores/notification';
   import { ToastNotification } from 'carbon-components-svelte';
+  import { createEventDispatcher } from 'svelte';
   import { slide } from 'svelte/transition';
 
-  export let timeout = 7000;
+  type Notification = {
+    key: number;
+    kind: 'error' | 'info' | 'success' | 'warning';
+    title: string;
+    subtitle?: string;
+    caption: string;
+  };
 
-  const notifications = notificationsStore();
-  const close = (key: number) => removeNotification(notifications, key);
+  export let notifications: Notification[] = [];
+  export let timeout = 7000;
+  export let lowContrast = false;
+
+  const dispatch = createEventDispatcher();
 </script>
 
 <div class="notifications-container">
-  {#each $notifications as { key, kind, title, subtitle, caption } (key)}
+  {#each notifications as notification (notification.key)}
     <div class="toast" transition:slide={{ axis: 'x' }}>
       <ToastNotification
         {timeout}
-        {kind}
-        {title}
-        {subtitle}
-        {caption}
-        on:close={() => close(key)}
+        {lowContrast}
+        {...notification}
+        on:close={() => dispatch('close', notification.key)}
       />
     </div>
   {/each}

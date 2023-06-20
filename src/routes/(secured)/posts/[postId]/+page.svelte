@@ -9,6 +9,10 @@
     Grid,
     Row
   } from 'carbon-components-svelte';
+  import {
+    addNotification,
+    notificationsStore
+  } from '$lib/stores/notification';
 
   export let data: { post: PostDto };
 
@@ -27,11 +31,20 @@
     active = true;
     const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
     if (response.status === 200) {
+      addNotification(notifications, {
+        kind: 'success',
+        title: 'Post deleted'
+      });
       goto('/posts');
     } else {
+      addNotification(notifications, {
+        kind: 'error',
+        title: 'Failed to delete post'
+      });
       active = false;
     }
   };
+  const notifications = notificationsStore();
 </script>
 
 <Grid narrow>
