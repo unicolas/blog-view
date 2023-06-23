@@ -15,7 +15,7 @@
     BreadcrumbItem,
     Tag
   } from 'carbon-components-svelte';
-  import { Chat } from 'carbon-icons-svelte';
+  import CommentsButton from './CommentsButton.svelte';
 
   export let data: PageDto<PostDto & { username: string }>;
 
@@ -61,7 +61,7 @@
       </Breadcrumb>
     </Column>
   </Row>
-  {#each posts as { title, content, tags, createdAt, postId, authorId, username }}
+  {#each posts as { title, content, tags, createdAt, postId, authorId, username } (postId)}
     <Row padding>
       <Column>
         <Card heading={title} eyebrow={username} body={content}>
@@ -74,9 +74,7 @@
             />
           </svelte:fragment>
           <svelte:fragment slot="actions">
-            <Button kind="ghost" href={`/posts/${postId}`} icon={Chat}>
-              #
-            </Button>
+            <CommentsButton id={postId} />
             <DateCaption date={createdAt} />
           </svelte:fragment>
           <svelte:fragment slot="tag-group">
