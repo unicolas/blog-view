@@ -41,6 +41,7 @@
   <HeaderNav>
     <HeaderNavItem href="/" text="Home" />
     <HeaderNavItem href="/posts" text="Posts" />
+    <HeaderNavItem href="/posts/new" text="New" />
   </HeaderNav>
   <HeaderUtilities>
     <HeaderAction
