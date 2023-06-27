@@ -4,6 +4,7 @@
   export let heading: string;
   export let eyebrow: string | undefined = undefined;
   export let body = '';
+  export let lineClamp: number | 'none' = 'none';
 </script>
 
 <Tile>
@@ -19,7 +20,7 @@
     </div>
   </div>
   <div class="body-wrapper">
-    <p class="body">{body}</p>
+    <p class="body line-clamp" style:-webkit-line-clamp={lineClamp}>{body}</p>
     <div class="tag-group">
       {#if $$slots['tag-group']}
         <slot name="tag-group" />
@@ -42,6 +43,12 @@
   }
   .body {
     @include type.type-style('body-long-02');
+    white-space: pre-wrap;
+  }
+  .line-clamp {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
   }
   .footer-wrapper {
     align-items: flex-end;

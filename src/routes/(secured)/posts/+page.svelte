@@ -64,7 +64,7 @@
   {#each posts as { title, content, tags, createdAt, postId, authorId, username } (postId)}
     <Row padding>
       <Column>
-        <Card heading={title} eyebrow={username} body={content}>
+        <Card heading={title} eyebrow={username} body={content} lineClamp={8}>
           <svelte:fragment slot="heading-action">
             <svelte:component
               this={authorId === $user.id ? DeleteButton : undefined}
