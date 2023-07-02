@@ -1,8 +1,8 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { Card, DateCaption, DeleteButton } from '$lib/components';
-  import { userStore } from '$lib/stores';
   import type { PostDto } from '$lib/types';
+  import { user, notifications } from '$lib/stores';
   import {
     Breadcrumb,
     BreadcrumbItem,
@@ -13,10 +13,6 @@
     Tag
   } from 'carbon-components-svelte';
   import { Chat } from 'carbon-icons-svelte';
-  import {
-    addNotification,
-    notificationsStore
-  } from '$lib/stores/notification';
 
   export let data: { post: PostDto & { username: string } };
 
@@ -36,21 +32,13 @@
     active = true;
     const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
     if (response.status === 200) {
-      addNotification(notifications, {
-        kind: 'success',
-        title: 'Post deleted'
-      });
+      notifications.add({ kind: 'success', title: 'Post deleted' });
       goto('/posts');
     } else {
-      addNotification(notifications, {
-        kind: 'error',
-        title: 'Failed to delete post'
-      });
+      notifications.add({ kind: 'error', title: 'Failed to delete post' });
       active = false;
     }
   };
-  const notifications = notificationsStore();
-  const user = userStore();
 </script>
 
 <Grid narrow>

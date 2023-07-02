@@ -17,20 +17,14 @@
   } from 'carbon-components-svelte';
   import { UserAvatarFilledAlt } from 'carbon-icons-svelte';
   import type { LayoutData } from './$types';
-  import { userStore } from '$lib/stores';
+  import { notifications, user } from '$lib/stores';
   import { NotificationArea } from '$lib/components';
-  import {
-    notificationsStore,
-    removeNotification
-  } from '$lib/stores/notification';
 
   export let data: LayoutData;
 
-  const user = userStore({ name: data.username, id: data.id });
-  const notifications = notificationsStore();
+  user.init({ name: data.username, id: data.id });
   const closeNotification = (e: CustomEvent<number>) =>
-    removeNotification(notifications, e.detail);
-
+    notifications.remove(e.detail);
   let isOpen = false;
 </script>
 

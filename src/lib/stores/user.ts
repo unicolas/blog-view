@@ -1,13 +1,26 @@
-import { getContext, hasContext, setContext } from 'svelte';
-import { readable, type Readable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
+import { contextual } from './contextual';
 
 type User = { name: string; id: string };
 
-export const userStore = (value?: User) => {
-  if (hasContext('user')) {
-    return getContext<Readable<User>>('user');
-  }
-  const user = readable<User>(value);
-  setContext('user', user);
-  return user;
+type UserStore = {
+  subscribe: Writable<User>['subscribe'];
+  init: (value: User) => void;
 };
+
+function createStore(): UserStore {
+  const { subscribe, set } = writable<User>({ name: '', id: '' });
+
+  return {
+    subscribe,
+    init: (value: User) => set(value)
+  };
+}
+
+export const user = {
+  subscribe: (run, invalidate) => {
+    const { subscribe, init } = contextual(createStore(), 'user');
+    user.init = init;
+    return subscribe(run, invalidate);
+  }
+} as UserStore;
