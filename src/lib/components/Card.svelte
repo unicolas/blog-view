@@ -7,7 +7,7 @@
   export let lineClamp: number | 'none' = 'none';
 </script>
 
-<Tile>
+<Tile {...$$restProps}>
   <div class="heading-wrapper">
     {#if eyebrow}
       <div class="eyebrow">{eyebrow}</div>
