@@ -1,22 +1,26 @@
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { Card, DateCaption, DeleteButton } from '$lib/components';
-  import type { PostDto } from '$lib/types';
   import { user, notifications } from '$lib/stores';
+  import type { CommentDto, PageDto, PostDto } from '$lib/types';
   import {
     Breadcrumb,
     BreadcrumbItem,
-    Button,
     Column,
     Grid,
     Row,
     Tag
   } from 'carbon-components-svelte';
-  import { Chat } from 'carbon-icons-svelte';
+  import CommentCount from './CommentCount.svelte';
+  import CommentList from './CommentList.svelte';
 
-  export let data: { post: PostDto & { username: string } };
+  export let data: {
+    post: PostDto & { username: string };
+    comments: PageDto<CommentDto & { username: string }>;
+  };
 
   let active = false;
+  let commentCount = 0;
   const {
     postId: id,
     title,
@@ -27,8 +31,7 @@
     username
   } = data.post;
   const url = `/posts/${id}`;
-  const handleDeletePost = async (event: CustomEvent<string>) => {
-    const postId = event.detail;
+  const handleDeletePost = async ({ detail: id }: CustomEvent<string>) => {
     active = true;
     const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
     if (response.status === 200) {
@@ -39,6 +42,7 @@
       active = false;
     }
   };
+  const handleCommentDelete = () => void --commentCount;
 </script>
 
 <Grid narrow>
@@ -62,7 +66,6 @@
           />
         </svelte:fragment>
         <svelte:fragment slot="actions">
-          <Button kind="ghost" href={`/posts/${id}/#`} icon={Chat}>#</Button>
           <DateCaption {date} />
         </svelte:fragment>
         <svelte:fragment slot="tag-group">
@@ -71,6 +74,16 @@
           {/each}
         </svelte:fragment>
       </Card>
+    </Column>
+  </Row>
+  <Row>
+    <Column>
+      <CommentCount {id} bind:comments={commentCount} />
+    </Column>
+  </Row>
+  <Row padding>
+    <Column>
+      <CommentList {id} data={data.comments} on:delete={handleCommentDelete} />
     </Column>
   </Row>
 </Grid>

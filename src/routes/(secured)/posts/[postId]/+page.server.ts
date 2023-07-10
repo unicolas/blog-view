@@ -2,5 +2,8 @@ import type { PageServerLoad } from './$types';
 
 export const load = (async ({ fetch, params }) => {
   const post = await (await fetch(`/posts/${params.postId}`)).json();
-  return { post };
+  const comments = await (
+    await fetch(`/posts/${params.postId}/comments`)
+  ).json();
+  return { post, comments };
 }) satisfies PageServerLoad;

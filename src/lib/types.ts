@@ -14,3 +14,13 @@ export type PostDto = {
   title: string;
   updatedAt: string;
 };
+
+export type CommentDto = {
+  authorId: string;
+  content: string;
+  createdAt: string;
+  postId: string;
+  commentId: string;
+  title: string;
+  updatedAt: string;
+};
