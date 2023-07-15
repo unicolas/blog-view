@@ -4,7 +4,6 @@
   import type { NavigationTarget } from '@sveltejs/kit';
   import {
     Button,
-    ButtonSet,
     Form,
     FormGroup,
     Modal,
@@ -71,10 +70,7 @@
     bind:tags
     suggestions={[{ id: 'new', text: 'new' }]}
   />
-  <ButtonSet>
-    <Button kind="secondary">Cancel</Button>
-    <Button type="submit" disabled={!submissible}>Create post</Button>
-  </ButtonSet>
+  <Button type="submit" disabled={!submissible}>Create post</Button>
 </Form>
 
 <Modal
