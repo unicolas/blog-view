@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Card, DateCaption, DeleteButton } from '$lib/components';
+  import { Card, DateCaption, DeleteButton, Layout } from '$lib/components';
   import { notifications, user } from '$lib/stores';
   import type { CommentDto, PageDto } from '$lib/types';
   import { Button } from 'carbon-components-svelte';
@@ -41,7 +41,7 @@
   };
 </script>
 
-<div class="list-wrapper">
+<Layout gap={5}>
   {#each comments as { title, content, createdAt, commentId, authorId, username } (commentId)}
     <Card light heading={title} eyebrow={username} body={content}>
       <svelte:fragment slot="heading-action">
@@ -60,14 +60,4 @@
   <Button on:click={fetchNext} disabled={!hasNextPage || isLoading}
     >more comments</Button
   >
-</div>
-
-<style lang="scss">
-  @use '@carbon/layout' as layout;
-
-  .list-wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: layout.$spacing-05;
-  }
-</style>
+</Layout>

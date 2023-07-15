@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { DateCaption, DeleteButton, Card } from '$lib/components';
+  import { DateCaption, DeleteButton, Card, Layout } from '$lib/components';
   import { user, notifications } from '$lib/stores';
   import type { PageDto, PostDto } from '$lib/types';
   import {
@@ -44,39 +44,33 @@
 <Grid narrow>
   <Row>
     <Column>
-      <Breadcrumb noTrailingSlash>
-        <BreadcrumbItem isCurrentPage href="/posts">Posts</BreadcrumbItem>
-      </Breadcrumb>
-    </Column>
-  </Row>
-  {#each posts as { title, content, tags, createdAt, postId, authorId, username } (postId)}
-    <Row padding>
-      <Column>
-        <Card heading={title} eyebrow={username} body={content} lineClamp={8}>
-          <svelte:fragment slot="heading-action">
-            <svelte:component
-              this={authorId === $user.id ? DeleteButton : undefined}
-              id={postId}
-              disabled={active[postId] ?? false}
-              on:delete={handleDeletePost}
-            />
-          </svelte:fragment>
-          <svelte:fragment slot="actions">
-            <CommentsButton id={postId} />
-            <DateCaption date={createdAt} />
-          </svelte:fragment>
-          <svelte:fragment slot="tag-group">
-            {#each tags as tag}
-              <Tag interactive>{tag}</Tag>
-            {/each}
-          </svelte:fragment>
-        </Card>
-      </Column>
-    </Row>
-  {/each}
-  <Row>
-    <Column>
-      <Button on:click={fetchNext} disabled={!hasNextPage}>more</Button>
+      <Layout gap={5}>
+        <Breadcrumb noTrailingSlash>
+          <BreadcrumbItem isCurrentPage href="/posts">Posts</BreadcrumbItem>
+        </Breadcrumb>
+        {#each posts as { title, content, tags, createdAt, postId, authorId, username } (postId)}
+          <Card heading={title} eyebrow={username} body={content} lineClamp={8}>
+            <svelte:fragment slot="heading-action">
+              <svelte:component
+                this={authorId === $user.id ? DeleteButton : undefined}
+                id={postId}
+                disabled={active[postId] ?? false}
+                on:delete={handleDeletePost}
+              />
+            </svelte:fragment>
+            <svelte:fragment slot="actions">
+              <CommentsButton id={postId} />
+              <DateCaption date={createdAt} />
+            </svelte:fragment>
+            <svelte:fragment slot="tag-group">
+              {#each tags as tag}
+                <Tag interactive>{tag}</Tag>
+              {/each}
+            </svelte:fragment>
+          </Card>
+        {/each}
+        <Button on:click={fetchNext} disabled={!hasNextPage}>more posts</Button>
+      </Layout>
     </Column>
   </Row>
 </Grid>
