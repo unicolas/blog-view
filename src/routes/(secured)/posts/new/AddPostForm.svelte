@@ -25,11 +25,12 @@
   let title = form?.title ?? '';
   let content = form?.content ?? '';
   let intercepted: NavigationTarget | null = null;
+  let submitted = false;
   $: submissible = !!title && !!content;
   $: blank = !title && !content && tags.length === 0;
 
   beforeNavigate(({ to, cancel }) => {
-    if (blank || intercepted) {
+    if (blank || intercepted || submitted) {
       return;
     }
     cancel();
@@ -39,7 +40,7 @@
   });
 </script>
 
-<Form method="POST" action="?/addPost">
+<Form method="POST" action="?/addPost" on:submit={() => (submitted = true)}>
   <FormGroup>
     <TextInput
       invalid={!!form?.invalidTitle}
