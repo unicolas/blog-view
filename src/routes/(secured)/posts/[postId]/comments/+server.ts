@@ -37,3 +37,15 @@ export const GET = (async ({ fetch, locals, params, url }) => {
     })
   );
 }) satisfies RequestHandler;
+
+export const POST = (async ({ request, fetch, locals, params }) => {
+  const { title, content } = await request.json();
+  return fetch(
+    fromApi(`posts/${params.postId}/comments`),
+    withToken(locals.token, {
+      method: 'POST',
+      body: JSON.stringify({ title, content }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+  );
+}) satisfies RequestHandler;

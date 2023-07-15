@@ -13,11 +13,14 @@
   } from 'carbon-components-svelte';
   import CommentCount from './CommentCount.svelte';
   import CommentList from './CommentList.svelte';
+  import AddCommentForm from './AddCommentForm.svelte';
+  import type { ActionData } from './$types';
 
   export let data: {
     post: PostDto & { username: string };
     comments: PageDto<CommentDto & { username: string }>;
   };
+  export let form: ActionData;
 
   let active = false;
   let commentCount = 0;
@@ -33,7 +36,7 @@
   const url = `/posts/${id}`;
   const handleDeletePost = async ({ detail: id }: CustomEvent<string>) => {
     active = true;
-    const response = await fetch(`/posts/${postId}`, { method: 'DELETE' });
+    const response = await fetch(`/posts/${id}`, { method: 'DELETE' });
     if (response.status === 200) {
       notifications.add({ kind: 'success', title: 'Post deleted' });
       goto('/posts');
@@ -82,6 +85,11 @@
     </Column>
   </Row>
   <Row padding>
+    <Column>
+      <AddCommentForm {form} />
+    </Column>
+  </Row>
+  <Row>
     <Column>
       <CommentList {id} data={data.comments} on:delete={handleCommentDelete} />
     </Column>
