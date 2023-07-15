@@ -23,15 +23,19 @@
     hasNextPage = data.hasNextPage;
     isLoading = false;
   };
-  const handleDeleteComment = async ({ detail: id }: CustomEvent<string>) => {
-    active = { ...active, [id]: true };
-    const response = await fetch(`/comments/${id}`, { method: 'DELETE' });
+  const handleDeleteComment = async ({
+    detail: commentId
+  }: CustomEvent<string>) => {
+    active = { ...active, [commentId]: true };
+    const response = await fetch(`/posts/${id}/comments/${commentId}`, {
+      method: 'DELETE'
+    });
     if (response.status === 200) {
-      comments = comments.filter(({ commentId }) => commentId !== id);
-      dispatch('delete', id);
+      comments = comments.filter(({ commentId: id }) => id !== commentId);
+      dispatch('delete', commentId);
       notifications.add({ kind: 'success', title: 'Comment deleted' });
     } else {
-      active = { ...active, [id]: false };
+      active = { ...active, [commentId]: false };
       notifications.add({ kind: 'error', title: 'Failed to delete comment' });
     }
   };
