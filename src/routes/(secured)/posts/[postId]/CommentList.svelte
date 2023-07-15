@@ -57,7 +57,9 @@
       </svelte:fragment>
     </Card>
   {/each}
-  <Button on:click={fetchNext} disabled={!hasNextPage || isLoading}
-    >more comments</Button
-  >
+  {#if hasNextPage || comments.length > 1}
+    <Button on:click={fetchNext} disabled={!hasNextPage || isLoading}
+      >more comments</Button
+    >
+  {/if}
 </Layout>
