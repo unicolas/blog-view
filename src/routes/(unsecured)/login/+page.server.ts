@@ -1,11 +1,19 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load = (async ({ cookies }) => {
+  const username = cookies.get('Username') ?? '';
+  return { username };
+}) satisfies PageServerLoad;
 
 export const actions = {
-  default: async ({ request, fetch, url }) => {
+  logIn: async ({ request, fetch, url, cookies }) => {
     const data = await request.formData();
     const username = data.get('username') as string;
     const password = data.get('password') as string;
+    data.has('remember')
+      ? cookies.set('Username', username)
+      : cookies.delete('Username');
     const response = await fetch('/login', {
       method: 'POST',
       body: JSON.stringify({ username, password }),

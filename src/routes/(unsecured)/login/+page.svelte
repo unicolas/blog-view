@@ -1,99 +1,101 @@
 <script lang="ts">
   import {
     Button,
-    Column,
-    FluidForm,
-    Grid,
+    Checkbox,
+    Form,
     InlineNotification,
+    Loading,
     PasswordInput,
-    Row,
-    TextInput
+    TextInput,
+    Tile
   } from 'carbon-components-svelte';
   import type { ActionData } from './$types';
+  import { Layout } from '$lib/components';
+  import { ArrowRight } from 'carbon-icons-svelte';
 
   export let form: ActionData;
+  export let data: { username: string | null };
+
+  let submitted = false;
+  let username = form?.username ?? data.username ?? '';
+  let password = '';
+  let remember = data.username !== '';
+  $: submittable = !!username && !!password;
 </script>
 
 <div class="center-container">
-  <div class="login-container">
-    <Grid noGutter>
-      <Row padding>
-        <Column>
-          <Grid condensed>
-            <Row>
-              <Column>
-                <h2>Log in</h2>
-              </Column>
-            </Row>
-            {#if form?.success === false}
-              <Row>
-                <Column>
-                  <InlineNotification
-                    kind="error"
-                    title="Incorrect username or password."
-                    subtitle="Try again"
-                    hideCloseButton
-                  />
-                </Column>
-              </Row>
-            {/if}
-          </Grid>
-        </Column>
-      </Row>
-      <Row>
-        <Column>
-          <FluidForm>
-            <form method="POST">
-              <TextInput
-                name="username"
-                labelText="User name"
-                placeholder="username"
-                required
-                value={form?.username ?? ''}
-              />
-              <PasswordInput
-                name="password"
-                required
-                type="password"
-                labelText="Password"
-                placeholder="password"
-              />
+  <Tile>
+    <Loading active={submitted} />
+    <div class="tile-content">
+      <Layout orientation="vertical" gap={6}>
+        <h2>Log in</h2>
+        {#if form?.success === false}
+          <InlineNotification
+            kind="error"
+            title="Incorrect username or password."
+            subtitle="Try again"
+            hideCloseButton
+          />
+        {/if}
+        <Form
+          method="POST"
+          action="?/logIn"
+          on:submit={() => (submitted = true)}
+        >
+          <Layout orientation="vertical" gap={6}>
+            <TextInput
+              light
+              name="username"
+              labelText="Username"
+              placeholder=""
+              required
+              bind:value={username}
+            />
+            <PasswordInput
+              light
+              name="password"
+              required
+              type="password"
+              labelText="Password"
+              placeholder=""
+              bind:value={password}
+            />
+            <Checkbox
+              name="remember"
+              labelText="Remember username"
+              bind:checked={remember}
+              value={remember}
+            />
+            <div class="button-container">
               <Button
-                class="float--right width--full"
+                disabled={!submittable || submitted}
+                icon={ArrowRight}
                 expressive
-                size="lg"
-                type="submit"
+                type="submit">Log in</Button
               >
-                Log in
-              </Button>
-            </form>
-          </FluidForm>
-        </Column>
-      </Row>
-    </Grid>
-  </div>
+            </div>
+          </Layout>
+        </Form>
+      </Layout>
+    </div>
+  </Tile>
 </div>
 
 <style lang="scss">
-  @use '@carbon/themes/scss/themes' as *;
-  @use '@carbon/themes' as * with (
-    $theme: $g90
-  );
-  :global(.float--right) {
-    float: right;
-  }
-  :global(.width--full) {
-    width: 100%;
-  }
-  .login-container {
-    background: $layer-01;
-    display: block;
-    width: 100%;
-  }
+  @use '@carbon/layout' as layout;
   .center-container {
-    height: 80vh;
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-rows: 80vh;
+    justify-content: stretch;
     align-items: center;
+    width: 100%;
+  }
+  .tile-content {
+    padding: layout.$spacing-05;
+  }
+  .button-container {
+    display: grid;
+    grid-auto-flow: row;
+    justify-content: end;
   }
 </style>
