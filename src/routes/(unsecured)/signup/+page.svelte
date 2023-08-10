@@ -1,7 +1,6 @@
 <script lang="ts">
   import {
     Button,
-    Checkbox,
     Form,
     InlineNotification,
     Loading,
@@ -14,13 +13,23 @@
   import { ArrowRight } from 'carbon-icons-svelte';
 
   export let form: ActionData;
-  export let data: { username: string | null };
 
   let submitted = false;
-  let username = form?.username ?? data.username ?? '';
+  let username = form?.username ?? '';
   let password = '';
-  let remember = data.username !== '';
-  $: submittable = !!username && !!password;
+  let email = form?.email ?? '';
+  $: submittable = validUsername && validEmail && validPassword;
+  $: validUsername = username.match(/^[\w-]{4,}$/);
+  $: validEmail = email.match(/^.{2,}@.{2,}\..{2,}$/);
+  $: validPassword = password.match(
+    /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[\x21-\x2F\x3A-\x40\x5B-\x60\x7B-\x7E])[\x21-\x7E]{6,}$/
+  );
+  const usernameHelpText =
+    'Your username must be at least 4 characters long and contain letters,\
+     numbers, \u{201C}_\u{201D} or \u{201C}-\u{201D}.';
+  const passwordHelpText =
+    'Your password must be at least 6 characters long and contain at least\
+     one letter, one number and one special character.';
 </script>
 
 <div class="center-container">
@@ -28,18 +37,18 @@
     <Loading active={submitted} />
     <div class="tile-content">
       <Layout orientation="vertical" gap={6}>
-        <h2>Log in</h2>
+        <h2>Sign up</h2>
         {#if form?.success === false}
           <InlineNotification
             kind="error"
-            title="Incorrect username or password."
+            title="There was a problem creating you user."
             subtitle="Try again"
             hideCloseButton
           />
         {/if}
         <Form
           method="POST"
-          action="?/logIn"
+          action="?/signUp"
           on:submit={() => (submitted = true)}
         >
           <Layout orientation="vertical" gap={6}>
@@ -47,9 +56,22 @@
               light
               name="username"
               labelText="Username"
-              placeholder=""
+              placeholder="e.g. user_89"
               required
+              helperText={usernameHelpText}
+              invalid={!!username && !validUsername}
+              invalidText={usernameHelpText}
               bind:value={username}
+            />
+            <TextInput
+              light
+              name="email"
+              labelText="Email"
+              placeholder="e.g. user@mail.com"
+              required
+              invalid={!!email && !validEmail}
+              invalidText="Please enter a valid email"
+              bind:value={email}
             />
             <PasswordInput
               light
@@ -58,24 +80,19 @@
               type="password"
               labelText="Password"
               placeholder=""
+              helperText={passwordHelpText}
+              invalid={!!password && !validPassword}
+              invalidText={passwordHelpText}
               bind:value={password}
-            />
-            <Checkbox
-              name="remember"
-              labelText="Remember username"
-              bind:checked={remember}
-              value={remember}
             />
             <div class="button-container">
               <Button
                 disabled={!submittable || submitted}
                 icon={ArrowRight}
                 expressive
-                type="submit">Log in</Button
+                type="submit">Sign up</Button
               >
-              <Button href="signup" kind="ghost"
-                >Don't have an account? Sign up</Button
-              >
+              <Button href="login" kind="ghost">Have an account? Log in</Button>
             </div>
           </Layout>
         </Form>

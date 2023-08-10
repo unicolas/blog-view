@@ -1,6 +1,6 @@
 import { type Handle, redirect } from '@sveltejs/kit';
 
-const isSecured = (path: string) => !['/login'].includes(path);
+const isSecured = (path: string) => !['/login', '/signup'].includes(path);
 
 export const handle = (async ({ event, resolve }) => {
   if (isSecured(event.url.pathname)) {
